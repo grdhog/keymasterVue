@@ -26,9 +26,7 @@ export default {
     DataTable,
   },
   async mounted() {
-
     console.log('I just mounted bro!');
-
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
     const querySnapshot = await getDocs(collection(db, 'keys'));
