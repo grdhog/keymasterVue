@@ -2,31 +2,17 @@
   <table class="table">
     <thead>
       <tr>
-        <th scope="col">#</th>
-        <th scope="col">First</th>
-        <th scope="col">Last</th>
-        <th scope="col">Handle</th>
-      </tr>
+        <th>keySystem</th>
+        <th>keyRank</th>
+        <th>keyIssue</th>
+      </tr>     
     </thead>
     <tbody>
-      <tr>
-        <th scope="row">1</th>
-        <td>Mark</td>
-        <td>Otto</td>
-        <td>@mdo</td>
-      </tr>
-      <tr>
-        <th scope="row">2</th>
-        <td>Jacob</td>
-        <td>Thornton</td>
-        <td>@fat</td>
-      </tr>
-      <tr>
-        <th scope="row">3</th>
-        <td>Larry</td>
-        <td>the Bird</td>
-        <td>@twitter</td>
-      </tr>
+      <tr v-for="doc in docs">
+        <td>{{doc.data().keySystem}}</td>
+        <td>{{doc.data().keyRank}}</td>
+        <td>{{doc.data().keyIssue}}</td>
+      </tr>     
     </tbody>
   </table>
 </template>
@@ -53,6 +39,11 @@ export default {
   mounted() {
     this.getData();
   },
+  data(){
+    return {
+      docs: []
+    }
+  },
   methods: {
     getData() {
       console.log('getData called!');
@@ -62,12 +53,10 @@ export default {
         .then(this.handleSuccess, this.handleFailure);
     },
     handleSuccess(value){
-      console.log(value);
-      /*
-      querySnapshot.forEach((doc) => {
-        console.log(`${doc.id} => ${doc.data().KeyName}`);
-      });
-      */
+      value.forEach((doc) => {
+        this.docs.push(doc);
+        console.log(`${doc.id} => ${doc.data().keySystem}-${doc.data().keyRank}-${doc.data().keyIssue}`);
+      });    
     },
     handleFailure(value){
       console.log(value);
