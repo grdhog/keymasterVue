@@ -46,26 +46,26 @@ export default {
     this.db = getFirestore(this.app);
   },
   methods: {
-    deleteKeys(coll) {
-      console.log('Deleting keys');
+    deleteCollection(coll, collName) {
+      console.log('Deleting ', collName);
       return new Promise((resolve, reject) => {
         try {
-          coll.forEach((d) => deleteDoc(doc(this.db, 'keys', d.id)));
-          resolve(true);
+          coll.forEach((d) => deleteDoc(doc(this.db, collName, d.id)));
+          resolve();
         } catch (error) {
           reject(error);
         }
       });
     },
-    addKeys(value) {
-      console.log('Adding keys');
+    addCollection(array, collName) {
+      console.log('Adding ', collName);
       return new Promise((resolve, reject) => {
         try {
-          testKeys.forEach((key) => {
-            console.log('adding', key);
-            addDoc(collection(this.db, 'keys'), key);
+          array.forEach((item) => {
+            console.log('adding', item);
+            addDoc(collection(this.db, collName), item);
           });
-          resolve(true);
+          resolve();
         } catch (error) {
           reject(error);
         }
@@ -74,18 +74,15 @@ export default {
     resetData() {
       getDocs(collection(this.db, 'keys'))
       .then((coll) => {
-        return this.deleteKeys(coll);
+        return this.deleteCollection(coll, 'keys');
       })
-      .then((value) => {
-        return this.addKeys(value);
+      .then(() => {
+        return this.addCollection(testKeys, 'keys');
       });
 
+      
 
-      /*
-      testUsers.forEach((user) => {
-        addDoc(collection(db, 'users'), user);
-      });
-      */
+
     },
   },
 };
