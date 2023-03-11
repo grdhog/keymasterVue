@@ -80,9 +80,13 @@ export default {
         return this.addCollection(testKeys, 'keys');
       });
 
-      
-
-
+      getDocs(collection(this.db, 'users'))
+      .then((coll) => {
+        return this.deleteCollection(coll, 'users');
+      })
+      .then(() => {
+        return this.addCollection(testUsers, 'users');
+      });
     },
   },
 };
