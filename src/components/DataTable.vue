@@ -2,21 +2,15 @@
   <table class="table">
     <thead>
       <tr>
-        <th>keySystem</th>
-        <th>keyRank</th>
-        <th>keyIssue</th>
+        <th>keyName</th>
       </tr>     
     </thead>
     <tbody>
       <tr>
-        <td><input v-model="keySystem"></td>
-        <td><input v-model="keyRank"></td>
-        <td><input v-model="keyIssue"></td>
+        <td><input v-model="keyName"></td>
       </tr>   
       <tr v-for="row in rows">
-        <td>{{row.data().keySystem}}</td>
-        <td>{{row.data().keyRank}}</td>
-        <td>{{row.data().keyIssue}}</td>
+        <td>{{row.keyName}}</td>
       </tr>     
     </tbody>
   </table>
@@ -47,15 +41,10 @@ export default {
   data(){
     return {
       docs: [],
-      keySystem: '',
-      keyRank: '',
-      keyIssue: ''
+      keyName: '',
     }
   },
   methods: {
-    filter(){
-      console.log('I need to filter shit');
-    },
     getData() {
       console.log('getData called!');
       const app = initializeApp(firebaseConfig);
@@ -65,8 +54,9 @@ export default {
     },
     handleSuccess(value){
       value.forEach((doc) => {
-        this.docs.push(doc);
-        console.log(`${doc.id} => ${doc.data().keySystem}-${doc.data().keyRank}-${doc.data().keyIssue}`);
+        let d = doc.data();
+        d.keyName = `${d.keySystem}-${d.keyRank}-${d.keyIssue}`;
+        this.docs.push(d);
       });    
     },
     handleFailure(value){
@@ -75,8 +65,8 @@ export default {
   },
   computed: {
     rows(){
-      const re = new RegExp(this.keySystem, 'i');
-      return this.docs.filter( (doc) => re.test(doc.data().keySystem) );
+      const re = new RegExp(this.keyName, 'i');
+      return this.docs.filter( (d) => re.test(d.keyName) );
     }
   }
 };
