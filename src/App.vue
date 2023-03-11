@@ -7,7 +7,13 @@
 
 <script>
 import DataTable from './components/DataTable.vue';
-import { collection, addDoc, doc, deleteDoc, getDocs } from 'firebase/firestore';
+import {
+  collection,
+  addDoc,
+  doc,
+  deleteDoc,
+  getDocs,
+} from 'firebase/firestore';
 import { initializeApp } from 'firebase/app';
 import { getFirestore } from 'firebase/firestore';
 import { testKeys, testUsers } from './testData.js';
@@ -30,31 +36,56 @@ export default {
   data() {
     return {
       firebaseConfig: firebaseConfig,
+      app: null,
+      db: null,
     };
   },
-  mounted() {
-    console.log('App mounted');
+  created() {
+    console.log('App created');
+    this.app = initializeApp(this.firebaseConfig);
+    this.db = getFirestore(this.app);
   },
   methods: {
-    resetData() {
-      const app = initializeApp(this.firebaseConfig);
-      const db = getFirestore(app);
-
-      const success = (value) => {
-        value.forEach((d) => deleteDoc(doc(db, "keys", d.id)));
-      }
-      const fail = (value) => console.log(value);
-      console.log('Deleting keys...')
-      getDocs(collection(db, 'keys'))
-        .then(success, fail);
-
+    deleteKeys(coll) {
+      console.log('Deleting keys');
+      return new Promise((resolve, reject) => {
+        try {
+          coll.forEach((d) => deleteDoc(doc(this.db, 'keys', d.id)));
+          resolve(true);
+        } catch (error) {
+          reject(error);
+        }
+      });
+    },
+    addKeys(value) {
       console.log('Adding keys');
+      return new Promise((resolve, reject) => {
+        try {
+          testKeys.forEach((key) => {
+            console.log('adding', key);
+            addDoc(collection(this.db, 'keys'), key);
+          });
+          resolve(true);
+        } catch (error) {
+          reject(error);
+        }
+      });      
+    },
+    resetData() {
+      getDocs(collection(this.db, 'keys'))
+      .then((coll) => {
+        return this.deleteKeys(coll);
+      })
+      .then((value) => {
+        return this.addKeys(value);
+      });
+
+
+      /*
       testUsers.forEach((user) => {
         addDoc(collection(db, 'users'), user);
       });
-      testKeys.forEach((key) => {
-        addDoc(collection(db, 'keys'), key);
-      });
+      */
     },
   },
 };
