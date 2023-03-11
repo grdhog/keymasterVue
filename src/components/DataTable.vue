@@ -8,10 +8,15 @@
       </tr>     
     </thead>
     <tbody>
-      <tr v-for="doc in docs">
-        <td>{{doc.data().keySystem}}</td>
-        <td>{{doc.data().keyRank}}</td>
-        <td>{{doc.data().keyIssue}}</td>
+      <tr>
+        <td><input v-model="keySystem"></td>
+        <td><input v-model="keyRank"></td>
+        <td><input v-model="keyIssue"></td>
+      </tr>   
+      <tr v-for="row in rows">
+        <td>{{row.data().keySystem}}</td>
+        <td>{{row.data().keyRank}}</td>
+        <td>{{row.data().keyIssue}}</td>
       </tr>     
     </tbody>
   </table>
@@ -41,10 +46,16 @@ export default {
   },
   data(){
     return {
-      docs: []
+      docs: [],
+      keySystem: '',
+      keyRank: '',
+      keyIssue: ''
     }
   },
   methods: {
+    filter(){
+      console.log('I need to filter shit');
+    },
     getData() {
       console.log('getData called!');
       const app = initializeApp(firebaseConfig);
@@ -60,6 +71,12 @@ export default {
     },
     handleFailure(value){
       console.log(value);
+    }
+  },
+  computed: {
+    rows(){
+      const re = new RegExp(this.keySystem, 'i');
+      return this.docs.filter( (doc) => re.test(doc.data().keySystem) );
     }
   }
 };
